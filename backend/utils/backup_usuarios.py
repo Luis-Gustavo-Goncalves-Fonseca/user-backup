@@ -4,25 +4,21 @@ from datetime import datetime as dt
 
 """
 Função responsável por criar o backup de um usuário específico.
-Recebe o ID do usuário escolhido (inteiro)
+Recebe o nome do usuário escolhido
 """
-def backup_usuarios():
+def backup_usuarios(user_name):
     # Caminho base onde estão os usuários
     path = Path(r"C:\Users")
 
     # Caminho para salvar os backups
     base_path = Path(r"D:\Arquivos\BackupsUsuarios")
 
-    # Lista apenas diretórios (usuários reais)
-    user_list = [item for item in path.iterdir() if item.is_dir()]
+    # Caminho do usuário
+    SelectedUser = path / user_name
 
-    # Mapeamento numerico
-    user_map = {i+1: user for i, user in enumerate(user_list)}
-        
-    # Verifica se o uusário existe no mapa
-    if user_choice not in user_map:
-        raise ValueError("Usuário inválido!")
-    SelectedUser = user_map[user_choice]
+    # Verificando se a pasta do usuário existe
+    if not SelectedUser.exists():
+        raise ValueError("Usuário não encontrado!")
 
     # Data para o nome do arquivo
     today = dt.now()
@@ -49,4 +45,4 @@ def backup_usuarios():
                 except Exception as e:
                     print(f"[IGNORADO] {file} -> {e}")
 
-    return f"Backup criado com sucesso: {TargetZip}"
+    return {"status": "ok", "arquivo": str(TargetZip)}

@@ -14,16 +14,16 @@ def index():
 def server_static(path):
     return send_from_directory("../frontend/static", path)
 
-# Rota para o back backup_usuarios
+# Rota para o back backup_usuarios (rota principal)
 @app.route("/api/backup_usuarios", methods=["POST"])
 def route_backup_usuarios():
     try:
         data = request.get_json()
-        user_id = int(data.get("user_choice"))
+        user_name = str(data.get("user_name"))
 
-        resultadp = backup_usuarios(user_id)
+        resultado = backup_usuarios(user_name)
 
-        return jsonify({"status": "ok"})
+        return jsonify(resultado)
     
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
