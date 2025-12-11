@@ -18,8 +18,12 @@ def server_static(path):
 @app.route("/api/backup_usuarios", methods=["POST"])
 def route_backup_usuarios():
     try:
-        backup_usuarios()
+        data = request.get_json()
+        user_id = int(data.get("user_choice"))
+
+        resultadp = backup_usuarios(user_id)
+
         return jsonify({"status": "ok"})
+    
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
-    
