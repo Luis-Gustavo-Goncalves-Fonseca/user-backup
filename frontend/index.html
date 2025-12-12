@@ -1,15 +1,29 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Backup Usuários</title>
-    <link rel="stylesheet" href="static/css/style.css">
+    <title>Backup de Usuários</title>
+    
+    <!-- Importação do css -->
+    <link rel="stylesheet" href="/frontend/static/css/style.css">
 </head>
 <body>
 
-    
+    <div class="container">
 
-<script src="/frontend/static/js/app.js"></script>
-</body>
+        <h1>Backup de usuários</h1>
+        
+        <!-- Área onde os usuários serão carregados pelo app.js -->
+        <label for="usuarios">Selecione um uusáiro:</label>
+        <select id="usuarios">
+            <option value="">Carregando usuários...</option>
+        </select>
+
+    </div>
+
+    <!-- Arquivos JavaScript -->
+     <script src="/frontend/static/js/app.js"></script>
+
+</body>    
 </html>
