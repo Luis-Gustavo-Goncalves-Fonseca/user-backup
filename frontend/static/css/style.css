@@ -58,7 +58,7 @@ button:hover {
     background: #a80000;
 }
 
-/* ===================== Status do backup =====================*/
+/* ===================== Status do backup ===================== */
 .status {
     margin-top: 20px;
     font-size: 15px;
@@ -76,4 +76,22 @@ button:hover {
     color: #b30000;
     background: #ffe8e8;
     border: 1px solid #ff6b6b;
+}
+
+/* ===================== Barra de progresso ===================== */
+.progress-container {
+    width: 100%;
+    height: 18px;
+    background: #ffe5e5;
+    border-radius: 8px;
+    overflow: heidden;
+    margin-top: 15px;
+    display: nome;
+}
+
+#progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ff0000, #ffcc00);
+    transition: width 0.3s ease;
 }

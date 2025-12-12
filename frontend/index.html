@@ -19,8 +19,18 @@
         <select id="usuarios">
             <option value="">Carregando usuários....</option>
         </select>
+        
+        <!-- Botão que chama o back -->
+         <button onclick="gerarBackup()"> Gerar backup</button>
 
+        <!-- Área de status -->
+          <div id="status.ok" class="status"></div>
     </div>
+    
+    <!-- Barra de progresso -->
+     <div class="progress-container">
+        <div id="progress-bar"></div>
+     </div>
 
     <!-- Arquivos JavaScript -->
      <script src="/frontend/static/js/app.js"></script>
