@@ -1,5 +1,4 @@
 // =================== BARRA DE PROGRESSO ===================
-
 function startProgress() {
     const barContainer = document.querySelector('.progress-container');
     const bar = document.getElementById('progress-bar');
@@ -86,5 +85,39 @@ async function gerarBackup() {
 
         statusBox.className = "status error";
         statusBox.innerText = "Erro ao conectar com o servidor: " + error;
+    }
+}
+
+
+// Carregar usuários quando a página abrir
+document.addEventListener("DOMContentLoaded", carregarUsuarios);
+
+async function carregarUsuarios() {
+    const selectUsuarios = document.getElementById("usuarios");
+
+    try {
+        const response = await fetch("/api/usuarios");
+        const data = await response.json();
+
+        // Limpa o select
+        selectUsuarios.innerHTML = "";
+
+        // Adiciona opção padrão
+        const optionDefault = document.createElement("option");
+        optionDefault.value = "";
+        optionDefault.textContent = "Selecione um usuário";
+        selectUsuarios.appendChild(optionDefault);
+
+        // Adiciona os usuários vindos do backend
+        data.usuarios.forEach(usuario => {
+            const option = document.createElement("option");
+            option.value = usuario;
+            option.textContent = usuario;
+            selectUsuarios.appendChild(option);
+        });
+
+    } catch (error) {
+        console.error("Erro ao carregar usuários:", error);
+        selectUsuarios.innerHTML = "<option>Erro ao carregar usuários</option>";
     }
 }
