@@ -5,20 +5,44 @@ from pathlib import Path
 
 app = Flask(__name__, static_folder="../frontend", template_folder="frontend")
 
+
+
 # Rota criada para o index
 @app.route("/")
 def index():
     return send_from_directory("../frontend", "index.html")
+
+
+
+# Rota para o back backup_usuarios (rota principal)
+@app.route("/api/backup_usuarios", methods=["POST"])
+def route_backup_usuarios():
+    try:
+        data = request.get_json()
+        user_name = str(data.get("user_name"))
+
+        resultado = backup_usuarios(user_name)
+
+        return jsonify(resultado)
+    
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+    
+
 
 # Rota criada para o css e js
 @app.route("/static/<path:path>")
 def server_static(path):
     return send_from_directory("../frontend/static", path)
 
+
+
 # Rota para listar os usuários
 @app.route("/api/usuarios", methods=["GET"])
 def route_users():
     base_path = Path(r"C:\Users")
+
+
 
     # Lista de usuario proibidos
     usuarios_proibidos = {
@@ -39,16 +63,5 @@ def route_users():
     
     return jsonify({"usuarios": usuarios})
 
-# Rota para o back backup_usuarios (rota principal)
-@app.route("/api/backup_usuarios", methods=["POST"])
-def route_backup_usuarios():
-    try:
-        data = request.get_json()
-        user_name = str(data.get("user_name"))
 
-        resultado = backup_usuarios(user_name)
-
-        return jsonify(resultado)
-    
-    except Exception as e:
-        return jsonify({"erro": str(e)}), 500
+#

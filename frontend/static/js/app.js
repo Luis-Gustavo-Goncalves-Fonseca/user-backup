@@ -1,97 +1,18 @@
-// =================== BARRA DE PROGRESSO ===================
-function startProgress() {
-    const barContainer = document.querySelector('.progress-container');
-    const bar = document.getElementById('progress-bar');
-    
-    barContainer.style.display = "block";
-    bar.style.width = "0%";
+// Tudo que precisa rodar ao carregar a página
+document.addEventListener("DOMContentLoaded", () => {
+    // Carrega a lista de usuários assim que a página abrir
+    carregarUsuarios();
 
-    let width = 0;
-    const interval = setInterval(() => {
-        width += 2;
-        if (width >= 95) width = 95;
-        bar.style.width = width + "%";
-    }, 150);
-
-    return interval;
-}
-
-function finishProgress(interval) {
-    clearInterval(interval);
-    const bar = document.getElementById('progress-bar');
-    bar.style.width = "100%";
-
-    setTimeout(() => {
-        document.querySelector('.progress-container').style.display = "none";
-        bar.style.width = "0%";
-    }, 800);
-}
-
-
-
-// =================== GERAR BACKUP ===================
-
-async function gerarBackup() {
-    const statusBox = document.getElementById("status-box");
-    const userSelect = document.getElementById("user-select");
-
-    const userName = userSelect.value;
-
-    // Verifica se o usuário foi selecionado
-    if (!userName) {
-        statusBox.className = "status error";
-        statusBox.innerText = "Selecione um usuário!";
-        return;
+    // Conecta o botão à função de backup
+    const botaoBackup = document.getElementById("gerarBackup");
+    if (botaoBackup) {
+        botaoBackup.addEventListener("click", gerarBackup);
     }
+});
 
-    // Inicia barra de progresso
-    const progressInterval = startProgress();
-
-    // Mostra mensagem
-    statusBox.className = "status";
-    statusBox.innerText = "Gerando backup... Aguarde.";
-
-    try {
-        const response = await fetch("/api/backup_usuarios", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ user_name: userName })
-        });
-
-        const data = await response.json();
-
-        // Finaliza barra
-        finishProgress(progressInterval);
-
-        // Caso dê erro
-        if (!response.ok || data.erro) {
-            statusBox.className = "status error";
-            statusBox.innerText = data.erro || "Erro desconhecido!";
-            return;
-        }
-
-        // Sucesso
-        statusBox.className = "status ok";
-        statusBox.innerHTML = `
-            Backup gerado com sucesso! <br><br>
-            <strong>Arquivo:</strong><br>
-            ${data.arquivo}
-        `;
-
-    } catch (error) {
-        finishProgress(progressInterval);
-
-        statusBox.className = "status error";
-        statusBox.innerText = "Erro ao conectar com o servidor: " + error;
-    }
-}
-
-
-// Carregar usuários quando a página abrir
-document.addEventListener("DOMContentLoaded", carregarUsuarios);
-
+// =========================
+// Carrega usuários do back-end
+// =========================
 async function carregarUsuarios() {
     const selectUsuarios = document.getElementById("usuarios");
 
@@ -100,15 +21,9 @@ async function carregarUsuarios() {
         const data = await response.json();
 
         // Limpa o select
-        selectUsuarios.innerHTML = "";
+        selectUsuarios.innerHTML = '<option value="">Selecione um usuário</option>';
 
-        // Adiciona opção padrão
-        const optionDefault = document.createElement("option");
-        optionDefault.value = "";
-        optionDefault.textContent = "Selecione um usuário";
-        selectUsuarios.appendChild(optionDefault);
-
-        // Adiciona os usuários vindos do backend
+        // Preenche com os usuários retornados pelo back-end
         data.usuarios.forEach(usuario => {
             const option = document.createElement("option");
             option.value = usuario;
@@ -118,6 +33,61 @@ async function carregarUsuarios() {
 
     } catch (error) {
         console.error("Erro ao carregar usuários:", error);
-        selectUsuarios.innerHTML = "<option>Erro ao carregar usuários</option>";
+        selectUsuarios.innerHTML = '<option value="">Erro ao carregar usuários</option>';
+    }
+}
+
+// =========================
+// Gera backup do usuário selecionado
+// =========================
+async function gerarBackup() {
+    const selectUsuarios = document.getElementById("usuarios");
+    const statusBox = document.getElementById("status-box");
+
+    const userName = selectUsuarios.value;
+
+    // Validação
+    if (!userName) {
+        statusBox.className = "status error";
+        statusBox.innerText = "Selecione um usuário.";
+        return;
+    }
+
+    // Feedback visual
+    statusBox.className = "status";
+    statusBox.innerText = "Gerando backup... aguarde.";
+
+    try {
+        const response = await fetch("/api/backup_usuarios", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                user_name: userName
+            })
+        });
+
+        const data = await response.json();
+
+        // Erro retornado pelo back-end
+        if (!response.ok || data.erro) {
+            statusBox.className = "status error";
+            statusBox.innerText = data.erro || "Erro ao gerar backup.";
+            return;
+        }
+
+        // Sucesso
+        statusBox.className = "status ok";
+        statusBox.innerHTML = `
+            Backup gerado com sucesso!<br><br>
+            <strong>Arquivo:</strong><br>
+            ${data.arquivo}
+        `;
+
+    } catch (error) {
+        statusBox.className = "status error";
+        statusBox.innerText = "Erro ao conectar com o servidor.";
+        console.error(error);
     }
 }
