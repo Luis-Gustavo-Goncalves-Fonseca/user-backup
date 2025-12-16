@@ -3,6 +3,15 @@ from flask import Flask, send_from_directory, jsonify, request
 from backend.utils.backup_usuarios import backup_usuarios
 from pathlib import Path
 
+
+# Estado global do backuup
+status_backup= {
+    "progresso": 0,
+    "mensagem" : "Aguardando início do backup...",
+    "em_execucao": False
+}
+
+
 app = Flask(__name__, static_folder="../frontend", template_folder="frontend")
 
 
@@ -64,4 +73,11 @@ def route_users():
     return jsonify({"usuarios": usuarios})
 
 
-#
+# Rota de status do backup
+@app.route("/api/backup/status", methods=["GET"])
+def status_backup_route():
+    return jsonify({
+        "progresso": status_backup["progresso"],
+        "mensagem": status_backup["mensagem"],
+        "em_execucao": status_backup["em_execucao"]
+    })
